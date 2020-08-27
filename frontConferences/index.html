@@ -30,9 +30,9 @@
         <div class="modal-wrap">
 
           <div class="modal-header">
-            <button class="previousBtn" v-if='eventsModel != null' v-on:click="hiddeModalEvent($refs.modal1, $refs.modal2, 1)"><</button>
+            <button class="previousBtn" v-if='eventsModel != null' v-on:click="hiddeModalEvent($refs.modal1, $refs.modal2, 1)" ref="btnVoltar" title="Voltar"><</button>
             <span ref='indice1' class="is-active"></span><span ref='indice2'></span>
-            <button class="nextBtn" v-if='eventsModel != null' v-on:click="hiddeModalEvent($refs.modal2, $refs.modal1, 2)">></button>
+            <button class="nextBtn" v-if='eventsModel != null' v-on:click="hiddeModalEvent($refs.modal2, $refs.modal1, 2)" ref="btnAvancar" title="Avançar">></button>
           </div>
 
           <div class="modal-bodies">
@@ -47,7 +47,7 @@
               </label>
               <!-- Button To Organize -->
               <div class="text-center">
-                <button class="button" v-on:click="upload" id="organize">Organizar</button>
+                <button class="button" v-on:click="validateForma" id="organize">Organizar</button>
               </div>
               <!-- Button To Organize -->
             </div>
@@ -70,8 +70,8 @@
                         <div class="cell"> Minutos   </div>
                       </div>
 
-                      <div class="row" v-for="event in eventsModel">
-                        <div class="cell" data-title="Age" v-if="track == event.track" > 
+                      <div class="row" v-for="event in eventsModel" v-bind:style="event.schedule == '17h' || event.schedule == '12h'  ? networkColor : '' ">
+                        <div class="cell" data-title="Age" v-if="track == event.track"> 
                           {{event.schedule}} 
                         </div>
                         <div class="align-cente cell" data-title="Occupation" v-if="track == event.track">
@@ -88,19 +88,17 @@
                 <!-- Table Schedules -->
 
               </div>
-
-            <!-- Confirm Modal  -->
-            <div class="modal-body modal-body-step-3" ref="modal3">
+          </div>
+        </div>
+          <!-- Confirm Modal  -->
+            <div class="modal-body modal-body-step-3" ref="modal3" style="display: none;">
               <div class="title">CONFIRMAÇÃO</div>
               <div class="description">Organizar outro evento?.</div>
               <div class="text-center">
                 <div class="button"  >Sim</div>
               </div>
             </div>
-            <!-- Confirm Modal  -->
-
-          </div>
-        </div>
+          <!-- Confirm Modal  -->
           <div class="text-center"> <div class="rerun-button">ReRun</div> </div>
         </div>
         <!-- Modal -->
@@ -115,9 +113,30 @@
           successAlert: '',
           organization: [],
           tracks: [],
-          eventsModel: null
+          eventsModel: null,
+          networkColor: {
+            fontWeight: 'bold'
+          },
+          lunchColor: {
+            color: 'green',
+            fontSize: '13px'
+          }
         },
         methods:{
+          validateForma () {
+            if (this.file && this.file.length) {
+              this.confirmReOrganization()
+            } else {
+              alert('É necessário ao menos 1 arquivo selecionado para prosseguir.')
+            }
+          },
+          confirmReOrganization () {
+            if (this.eventsModel && this.eventsModel.length) {
+              if (confirm('Deseja organizar outro evento?')) this.upload()
+            } else {
+              this.upload()
+            } 
+          },
           // Simple POST request with a JSON body using fetch
           async upload () {
             const files = this.$refs.file.files
@@ -140,7 +159,6 @@
               .then(async response => {
                 const data = await response.json()
                 // check for error response
-
                 if (!response.ok) {
                   // get error message from body or default to response status
                   const error = (data && data.message) || response.status
@@ -160,9 +178,9 @@
                   this.$refs.sucessAlert.style.display  = 'none'
 
                   this.eventsModel = data
-                  // number of Tracks
-                  this.tracks = this.eventsModel.map(item => item.track).reduce((unico, item) => {
-                      return unico.includes(item) ? unico : [...unico, item]
+                  // Get all the tracks returned in the request
+                  this.tracks = this.eventsModel.map(item => item.track).reduce((only, item) => {
+                      return only.includes(item) ? only : [...only, item]
                   }, [])
 
                   await this.displayTableData(2)
@@ -179,6 +197,9 @@
           displayTableData (stage) {
             this.hiddeModalEvent(this.$refs.modal2, this.$refs.modal1, stage)
           },
+          displayConfirmPanel () {
+            
+          },
           /*
             Hidden the modal event and activating from flow header 
             by passing the new modal and the old modal 
@@ -188,9 +209,9 @@
             if (stage) {
               this.$refs[`indice${stage}`].classList.add('is-active')
               if (stage == 1) {
-                this.$refs[`indice${2}`].classList.remove('is-active')
+                this.$refs[`indice2`].classList.remove('is-active')
               }else{
-                this.$refs[`indice${1}`].classList.remove('is-active')
+                this.$refs[`indice1`].classList.remove('is-active')
               }
             }
             modalActual.classList.add('is-showing')
