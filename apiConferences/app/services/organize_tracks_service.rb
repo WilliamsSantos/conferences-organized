@@ -22,16 +22,21 @@ class OrganizeTracksService
         # In problem expecification is describe that the schedules start at 09h
         currentMinutes = @minutesInHours['9h']
 
-        t = Track.create(session: 'A')
+		t = Track.create(session: 'A')
 
         countTrack = 0
         schedulesArray = []
         timesheetToOrganize.map do | item |
 
+			# if the document have something space e jumps the iteration
+			if item[:description] == ""
+				next
+			end
+
 			schedules = formatted_duration(currentMinutes)
 			onlyNumbersfromMinutes = item[:minutes].split('min')[0].to_i
 
-			#Check if is Lunch CoffeBreak
+			# Check if is Lunch CoffeBreak
 			if  currentMinutes >= @minutesInHours['12h'] && currentMinutes <= @minutesInHours['13h']
 
 				oldSchedules    = schedules
@@ -41,22 +46,22 @@ class OrganizeTracksService
 				newDescription  = @coffeeBreak['lunch']['description']
 				newMinutes      = @coffeeBreak['lunch']['minutes']
 
-				## record de Launch
+				# record de Launch
 				e = Event.create(schedule: newSchedules, 
 												description: newDescription, 
 												minutes: newMinutes)
 
 				t.eventsTrackRelation.create(event: e )
 				schedulesArray.push({schedule: newSchedules, 
-														description: newDescription,
-														minutes: newMinutes})
+									description: newDescription,
+									minutes: newMinutes})
 
 				currentMinutes =  @minutesInHours['13h']
 
-				## record de Old value
+				# record de Old value
 				e = Event.create(schedule: formatted_duration(currentMinutes), 
-													description: oldDescription, 
-													minutes: oldMinutes)
+								description: oldDescription, 
+								minutes: oldMinutes)
 
 				t.eventsTrackRelation.create(event: e )
 
@@ -73,59 +78,61 @@ class OrganizeTracksService
 				newDescription  = @coffeeBreak['network']['description']  
 				newMinutes      = @coffeeBreak['network']['minutes']
 
-				## record de Network
+				# record de Network
 				e = Event.create(schedule: newSchedules, 
 						description: newDescription, 
 						minutes: newMinutes)
 
 				t.eventsTrackRelation.create(event: e )
 				schedulesArray.push({schedule: newSchedules, 
-														description: newDescription, 
-														minutes: newMinutes})
+									description: newDescription, 
+									minutes: newMinutes})
 
 				# Create a new Track
 				t = Track.create(session: @alphabetIndex[countTrack])
 
 				currentMinutes = @minutesInHours['9h']
 
-				## record de Old value
+				# record de Old value
 				e = Event.create(schedule: formatted_duration(currentMinutes), 
-														description: oldDescription, 
-														minutes: oldMinutes)
+								description: oldDescription, 
+								minutes: oldMinutes)
 
 				t.eventsTrackRelation.create(event: e )
-				schedulesArray.push({schedule: newSchedules, 
-														description: newDescription, 
-														minutes: newMinutes})
+				schedulesArray.push({schedule: formatted_duration(currentMinutes), 
+									description: oldDescription, 
+									minutes: oldMinutes})
 
 				currentMinutes = currentMinutes + onlyNumbersfromMinutes
 
 				countTrack = countTrack + 1 
 			else
-				# Aparemtemente erro ao salavar o evento e fazer a relação com a track
 				e = Event.create(schedule: schedules, 
 								description: item[:description], 
 								minutes: item[:minutes])
 
 				t.eventsTrackRelation.create(event: e )
 				schedulesArray.push({schedule: schedules, 
-														description: item[:description], 
-														minutes: item[:minutes]})
+									description: item[:description], 
+									minutes: item[:minutes]})
 
 				currentMinutes = currentMinutes + onlyNumbersfromMinutes
 			end
         end
 
-        # get the schedules
+		# get the schedules
         lastItem = schedulesArray.reverse[0][:schedule].split('h')[0].to_i
 
         # check if the last hash its close the network conferences
         if lastItem >= 15 && lastItem != 17
-            e = Event.create( schedule:  @coffeeBreak['network']['hour'], 
-															description: @coffeeBreak['network']['description'] , 
-															minutes: @coffeeBreak['network']['minutes'])
+            e = Event.create(schedule: @coffeeBreak['network']['hour'], 
+							description: @coffeeBreak['network']['description'], 
+							minutes: @coffeeBreak['network']['minutes'])
 
-            t.eventsTrackRelation.create(event: e )
-        end
+			t.eventsTrackRelation.create(event: e)
+			schedulesArray.push({schedule: @coffeeBreak['network']['hour'], 
+								description: @coffeeBreak['network']['description'], 
+								minutes: @coffeeBreak['network']['minutes']})
+		end
 	end
 end

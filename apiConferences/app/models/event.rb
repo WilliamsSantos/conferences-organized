@@ -8,9 +8,9 @@ class Event < ApplicationRecord
 
     def self.organize_byTrack(rows)
         organization = []
-        self.all.limit(rows[:limit]).order(:track).map do |event|
+        self.all.limit(rows[:limit]).map do |event|
             organization.push({
-                track: event.eventsTrackRelation.track.session,
+                track: event.tracks.session,
                 schedule: event.schedule,  
                 minutes: event.minutes,
                 description: event.description
