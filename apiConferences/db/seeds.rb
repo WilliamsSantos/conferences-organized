@@ -1,0 +1,1 @@
+User.create(email: 'admin@organizaevento.com.br', password: 123456, authentication_token: "sQzPKg_p-S8SzAfr332J")
