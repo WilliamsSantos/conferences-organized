@@ -24,7 +24,7 @@ bundle install
 4. Após instalar as dependências crie o usuário de autenticação através do comando:
 
 ```sh
-rake db:seeds
+rake db:seed
 ```
 
 5. Rode os testes no teminal com o comando: 
