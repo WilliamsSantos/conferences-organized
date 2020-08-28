@@ -3,7 +3,11 @@
 
 ![Image Organizer](https://i.imgur.com/ZNCU8hy.png)
 
-## Gems:
+## BACKEND
+### Linguagem:
+    - Ruby
+    - Rails
+### Gems:
     - gem 'rails', '~> 6.0.3', '>= 6.0.3.2' 
     - gem 'rack-cors'
     - gem 'rack-attack'
@@ -11,6 +15,9 @@
     - gem 'simple_token_authentication', '~> 1.0'
     - gem 'rspec-rails', '~> 4.0.0'
     - Bundler version 2.1.2
+
+## FRONT-END:
+    Vue.js
 
 ## Rodando o Projeto:
 
