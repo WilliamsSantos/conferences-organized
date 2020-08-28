@@ -4,6 +4,7 @@
 ![Image Organizer](https://i.imgur.com/ZNCU8hy.png)
 
 ## Gems:
+    - gem 'rails', '~> 6.0.3', '>= 6.0.3.2' 
     - gem 'rack-cors'
     - gem 'rack-attack'
     - gem 'devise'
@@ -20,22 +21,26 @@
 ```sh
 bundle install
 ```
+4. Após instalar as dependências crie as migrations com o comando:
+```sh
+rake db:migrate
+```
 
-4. Após instalar as dependências crie o usuário de autenticação através do comando:
+5. Após isso crie o usuário de autenticação através do comando:
 
 ```sh
 rake db:seed
 ```
 
-5. Rode os testes no teminal com o comando: 
+6. Rode os testes no teminal com o comando: 
 ```
 rspec
 ``` 
 
-6. Por fim rode o comando a seguir para iniciar o servidor puma:
+7. Por fim rode o comando a seguir para iniciar o servidor puma:
 
 ```sh
 rails s
 ```
 
-7. Entre na pasta `frontConferences` e abra o arquivo index.html para ter acesso a página principal
+8. Entre na pasta `frontConferences` e abra o arquivo index.html para ter acesso a página principal.
