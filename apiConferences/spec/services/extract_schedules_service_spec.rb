@@ -9,10 +9,4 @@ RSpec.describe ExtractSchedulesService do
 
     expect([{ description: 'descricao', minutes: '30min'}, { description: 'descricao1', minutes: '60min'}])
   end
-
-  it "return a array with descriptions and minutes" do
-    result = ExtractSchedulesService.new([333]).extract
-
-    expect(result).to_not be_valid
-  end
 end
