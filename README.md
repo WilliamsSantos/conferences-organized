@@ -10,6 +10,7 @@
     - gem 'devise'
     - gem 'simple_token_authentication', '~> 1.0'
     - gem 'rspec-rails', '~> 4.0.0'
+    - Bundler version 2.1.2
 
 ## Rodando o Projeto:
 
