@@ -7,7 +7,7 @@ RSpec.describe FileFormatService do
 
     file = nil
 
-    File.open("#{Rails.root}/tmp/proposals.txt", 'r') do |fileb|
+    File.open("#{Rails.root}/proposals-teste.txt", 'r') do |fileb|
         file = fileb.first
     end
 
