@@ -15,27 +15,27 @@
 1. clone o repositório https://github.com/WilliamsSantos/Web-Coding-Challenge-Stant.git
 
 2. tenha certeza de que tem a versão `2.7.0` do ruby ​​e a versão `6.0.3.2` do Rails instalado na sua máquina.
-- Entre na pasta `ApiConferences` e rode o comando a seguir para instalar as dependências:
+3. Entre na pasta `ApiConferences` e rode o comando a seguir para instalar as dependências:
 
 ```sh
 bundle install
 ```
 
-3. Após instalar as dependências crie o usuário de autenticação através do comando:
+4. Após instalar as dependências crie o usuário de autenticação através do comando:
 
 ```sh
 rake db:seeds
 ```
 
-4. Rode os testes no teminal com o comando: 
+5. Rode os testes no teminal com o comando: 
 ```
 rspec
 ``` 
 
-5. Por fim rode o comando a seguir para iniciar o servidor puma:
+6. Por fim rode o comando a seguir para iniciar o servidor puma:
 
 ```sh
 rails s
 ```
 
-Entre na pasta `frontConferences` e abra o arquivo index.html para ter acesso a página principal
+7. Entre na pasta `frontConferences` e abra o arquivo index.html para ter acesso a página principal
