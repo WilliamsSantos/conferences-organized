@@ -10,30 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_26_021347) do
-
-  create_table "events", force: :cascade do |t|
-    t.string "schedule"
-    t.string "description"
-    t.string "minutes"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "events_track_relations", force: :cascade do |t|
-    t.integer "track_id", null: false
-    t.integer "event_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["event_id"], name: "index_events_track_relations_on_event_id"
-    t.index ["track_id"], name: "index_events_track_relations_on_track_id"
-  end
-
-  create_table "tracks", force: :cascade do |t|
-    t.string "session"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
+ActiveRecord::Schema.define(version: 2020_08_22_234023) do
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -49,6 +26,4 @@ ActiveRecord::Schema.define(version: 2020_08_26_021347) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "events_track_relations", "events"
-  add_foreign_key "events_track_relations", "tracks"
 end
