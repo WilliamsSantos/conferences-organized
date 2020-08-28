@@ -7,12 +7,17 @@ class Api::V1::OrganizationController < Api::V1::ApiController
 
     def organize
 
+        # Format the files
         fileFormat = FileFormatService.new({fileFormat: params}).format
-        orderTracksResult = OrganizeTracksService.new(fileFormat).assemble_timesheet
 
-        @tracks = Event.organize_byTrack(limit:50)
+        # Organize the tracks to response
+        @tracks = OrganizeTracksService.new(fileFormat).assemble_timesheet
 
-        render json: @tracks || [], status: 200
+        if  @tracks[:organize]
+            render json: @tracks[:data] || [], status: 200
+        else
+            render json: { error: orderTracksResult[:error] }, status: 500
+        end
     end
 
     private
