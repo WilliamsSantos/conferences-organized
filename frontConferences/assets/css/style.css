@@ -145,6 +145,14 @@ label:first-child {
   -webkit-transform-origin: top left;
           transform-origin: top left;
 }
+@media only screen and (max-width: 768px){
+  .modal-body {
+    height: 53vh;
+  }
+  .table-views {
+    height: 77vh !important;
+  }
+}
 .modal-body.is-showing {
   display: block;
 }
@@ -339,7 +347,8 @@ text-align: center
   border: 0;
   color: white;
   cursor: pointer;
-  width: 3vw;
+  width: 3rem;
+  height: 2rem;
   font-size: large;
   font-weight: bold;
 }

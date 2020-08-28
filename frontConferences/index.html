@@ -47,7 +47,7 @@
               </label>
               <!-- Button To Organize -->
               <div class="text-center">
-                <button class="button" v-on:click="validateForma" id="organize">Organizar</button>
+                <button class="button" v-on:click="validateForm" id="organize">Organizar</button>
               </div>
               <!-- Button To Organize -->
             </div>
@@ -69,37 +69,23 @@
                         <div class="cell"> Palestras </div>
                         <div class="cell"> Minutos   </div>
                       </div>
-
-                      <div class="row" v-for="event in eventsModel" v-bind:style="event.schedule == '17h' || event.schedule == '12h'  ? networkColor : '' ">
-                        <div class="cell" data-title="Age" v-if="track == event.track"> 
-                          {{event.schedule}} 
+                        <div class="row" v-for="event in eventsModel" v-bind:style="event.schedule == '17h' || event.schedule == '12h'  ? networkColor : '' ">
+                          <div class="cell" data-title="Horário" v-if="track == event.track"> 
+                            {{event.schedule}} 
+                          </div>
+                          <div class="align-cente cell" data-title="Descrição" v-if="track == event.track">
+                            {{event.description}}
+                          </div>
+                          <div class="cell" data-title="Minutos" v-if="track == event.track"> 
+                            {{event.minutes}} 
+                          </div>
                         </div>
-                        <div class="align-cente cell" data-title="Occupation" v-if="track == event.track">
-                          {{event.description}}
-                        </div>
-                        <div class="cell" data-title="Occupation" v-if="track == event.track"> 
-                          {{event.minutes}} 
-                        </div>
-                      </div>
-
                     </div>
                   </table>
                 </div>
                 <!-- Table Schedules -->
-
               </div>
           </div>
-        </div>
-          <!-- Confirm Modal  -->
-            <div class="modal-body modal-body-step-3" ref="modal3" style="display: none;">
-              <div class="title">CONFIRMAÇÃO</div>
-              <div class="description">Organizar outro evento?.</div>
-              <div class="text-center">
-                <div class="button"  >Sim</div>
-              </div>
-            </div>
-          <!-- Confirm Modal  -->
-          <div class="text-center"> <div class="rerun-button">ReRun</div> </div>
         </div>
         <!-- Modal -->
     <!-- Form -->
@@ -123,16 +109,24 @@
           }
         },
         methods:{
-          validateForma () {
+          validateForm () {
             if (this.file && this.file.length) {
-              this.confirmReOrganization()
-            } else {
+              if (this.file.split('.')[1] != 'txt') {
+                alert('Arquivo Com formato incorreto. O mesmo deve ser um arquivo .txt')
+                return false
+              }
+              this.confirmReOrganization()                
+            }else {
               alert('É necessário ao menos 1 arquivo selecionado para prosseguir.')
+              return false
             }
           },
           confirmReOrganization () {
             if (this.eventsModel && this.eventsModel.length) {
-              if (confirm('Deseja organizar outro evento?')) this.upload()
+              if (confirm('Deseja organizar outro evento?')){
+                this.eventsModel = null
+                this.upload()
+              } 
             } else {
               this.upload()
             } 
@@ -153,30 +147,36 @@
               body: formData
             }
             // disable the spinner
-            this.$refs.sucessAlert.style.display  = 'block'
+            this.spinner('enable')
 
             await fetch('http://localhost:3000/api/v1/organize/event', requestOptions)
               .then(async response => {
                 const data = await response.json()
                 // check for error response
+                console.log(response)
                 if (!response.ok) {
                   // get error message from body or default to response status
                   const error = (data && data.message) || response.status
 
-                  this.$refs.sucessAlert.style.display  = 'none'
+                  this.spinner('disable')
+
                   if (data.status == 401) {
                     this.errorAlert = response
                   } else {
                     this.errorAlert = 'Ops! Não foi possivel realizar a operação! '
                   }
-                  this.$refs.errorAlert.style.display  = 'block'
+
+                  this.spinner('enable')
 
                   // Disable alert
                   this.disable(this.$refs.errorAlert)
                   return Promise.reject(error)
                 } else {
-                  this.$refs.sucessAlert.style.display  = 'none'
-
+                  this.spinner('disable')
+                  if (!data.length) {
+                    alert('Arquivo Vazio.')
+                    return false
+                  }
                   this.eventsModel = data
                   // Get all the tracks returned in the request
                   this.tracks = this.eventsModel.map(item => item.track).reduce((only, item) => {
@@ -185,20 +185,16 @@
 
                   await this.displayTableData(2)
                 }
-                // this.postId = data.id
               })
               .catch(error => {
                 this.errorAlert = 'Erro de conexão ou Acesso.'
                 this.$refs.errorAlert.style.display  = 'block'
-                this.$refs.sucessAlert.style.display  = 'none'
+                this.spinner('disable')
                 this.disable(this.$refs.errorAlert)
               })
           },
           displayTableData (stage) {
             this.hiddeModalEvent(this.$refs.modal2, this.$refs.modal1, stage)
-          },
-          displayConfirmPanel () {
-            
           },
           /*
             Hidden the modal event and activating from flow header 
@@ -221,7 +217,14 @@
             setTimeout(() => {
               popup.style.display = 'none'
             }, 4500)
-          } 
+          },
+          spinner (behavior) {
+            if (behavior == 'enable') {
+              this.$refs.sucessAlert.style.display  = 'block'
+            } else {
+              this.$refs.sucessAlert.style.display  = 'none'
+            }
+          }
         }
       })
     </script>
