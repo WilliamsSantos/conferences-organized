@@ -1,4 +1,4 @@
-# Web-Coding-Challenge-Stant
+# Organizador de Conferências
 > Uma simples aplicação para organização de conferências.
 
 ![Image Organizer](https://i.imgur.com/ZNCU8hy.png)
